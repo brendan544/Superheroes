@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import IntegrityError
 
 db = SQLAlchemy()
 
@@ -34,7 +35,11 @@ class Power(db.Model):
             'name': self.name,
             'description': self.description
         }
-
+    def validate_description(self, key, description):
+        if not description or len(description) < 20:
+            raise ValueError('Description must be at least 20 characters long')
+        return description
+    
 class HeroPower(db.Model):
     __tablename__ = 'hero_powers'
     
@@ -57,6 +62,11 @@ class HeroPower(db.Model):
         }
 
 
+    def validate_strength(self, key, strength):
+        if strength not in ['Strong', 'Weak', 'Average']:
+            raise ValueError('Invalid strength value')
+        return strength
+    
 
 
 

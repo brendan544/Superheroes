@@ -1,34 +1,33 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-
+from flask import Flask, jsonify, request
 
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///superheroes.db'
 
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+
 
 from models import Hero, Power, HeroPower
-
+# GET /heroes
 @app.route('/heroes', methods=['GET'])
 def get_heroes():
     heroes = Hero.query.all()
     return jsonify([hero.to_dict() for hero in heroes]), 200
-
+# GET /heroes/:id
 @app.route('/heroes/<int:id>', methods=['GET'])
 def get_hero(id):
     hero = Hero.query.get(id)
     if not hero:
         return jsonify({"error": "Hero not found"}), 404
     return jsonify(hero.to_dict()), 200
-
+# GET /powers
 @app.route('/powers', methods=['GET'])
 def get_powers():
     powers = Power.query.all()
     return jsonify([power.to_dict() for power in powers]), 200
-
+# GET /powers/:id
 @app.route('/powers/<int:id>', methods=['GET'])
 def get_power(id):
     power = Power.query.get(id)
